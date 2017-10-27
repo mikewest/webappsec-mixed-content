@@ -84,3 +84,18 @@ enough value in based on the rumblings I've heard from Mozilla to be worth imple
 4.  User agents should **remove their shield UX more broadly**, perhaps following Safari's lead by
     removing it entirely, perhaps compromising based on use cases by moving it out of the address
     bar into developer tooling or extensions.
+
+## Questions
+
+1.  Kate noted that the [internet is not friendly to SYN packets to firewalled
+    ports](https://twitter.com/sigkate/status/923836727680147456). Apparently, it's quite common
+    for firewalls to drop packets to unexpected ports rather than closing the connection, which
+    caused Mozilla some pain when rolling out HSTS Priming (e.g.
+    <https://bugzilla.mozilla.org/show_bug.cgi?id=1311807>). We'll need to figure out whether the
+    opt-in for optionally-blockable content would be enough to mitigate this risk, or whether we'd
+    need deeper changes to network stack timeouts, etc. If the latter, that might shift the
+    cost/benefit analysis of auto-upgrading.
+
+2.  David Kitchen suggests that [SRI might be a reasonable
+    opt-in](https://twitter.com/buro9/status/923840947959496705) for optionally-blockable mixed
+    content.
