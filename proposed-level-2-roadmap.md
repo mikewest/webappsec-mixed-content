@@ -52,6 +52,11 @@ remains a fairly blunt opt-in mechanism that developers have to know about and c
 Priming](https://wicg.github.io/hsts-priming/) aimed to bump the defaults up a bit, but hasn't shown
 enough value in based on the rumblings I've heard from Mozilla to be worth implementing.
 
+### Downloads
+
+Insecure downloads can be highly dangerous, but they are not treated as mixed content, and many
+browsers (including Chrome) do not even label them as insecure in the UI.
+
 ## Proposals
 
 1.  User agents should **upgrade rather than block** requests currently categorized as blockable
@@ -66,17 +71,17 @@ enough value in based on the rumblings I've heard from Mozilla to be worth imple
 
 
 2.  User agents should **treat optionally-blockable mixed content as blockable by default** (and, if
-    we accept the proposal above, that means that we'd upgrade it rather than blocking). Since,
-    however, there are real use cases that still require loading optionally-blockable mixed content
-    (image search on Bing, Google, and other search engines that have chosen not to proxy other
-    folks' images for whatever reason; podcast applications like <https://overcast.fm/>; etc.), we
-    could could allow developers to opt-into status quo behavior in some way (perhaps a
-    `Mixed-Content: I-ve-Got-Some-Oh-Noes` header?) at the cost of degrading their security
-    indicator in some way. The assumption underlying this proposal is that a large fraction of
-    optionally-blockable mixed content is loaded accidentally or is not critical to the site's
-    functionality. If this assumption holds, then requiring site owners to explicitly opt in to
-    optionally-blockable mixed content will dramatically reduce the amount of optionally-blockable
-    mixed content that users end up loading.
+    we accept the proposal above, that means that we'd upgrade it rather than blocking). However,
+    there are use cases that still require loading optionally-blockable mixed content (image search
+    on Bing, Google, and other search engines that have chosen not to proxy other folks' images for
+    whatever reason; podcast applications like <https://overcast.fm/>; etc.). If necessary, we could
+    could allow developers to opt-into status quo behavior in some way (perhaps a `Mixed-Content:
+    I-ve-Got-Some-Oh-Noes` header?) at the cost of degrading their security indicator in some
+    way. The assumption underlying this proposal is that a large fraction of optionally-blockable
+    mixed content is loaded accidentally or is not critical to the site's functionality. If this
+    assumption holds, then requiring site owners to explicitly opt in to optionally-blockable mixed
+    content will dramatically reduce the amount of optionally-blockable mixed content that users end
+    up loading.
 
 3.  User agents should **deprecate and remove `Upgrade-Insecure-Requests`** to reduce the platform's
     overall complexity, as the two proposals above would seem to obviate it entirely.
@@ -84,6 +89,10 @@ enough value in based on the rumblings I've heard from Mozilla to be worth imple
 4.  User agents should **remove their shield UX more broadly**, perhaps following Safari's lead by
     removing it entirely, perhaps compromising based on use cases by moving it out of the address
     bar into developer tooling or extensions.
+
+5.  User agents should treat insecure downloads initiated from secure contexts as blockable mixed
+    content. To limit breakage, this measure may be restricted to high-risk downloads, e.g.,
+    executable file types.
 
 ## Questions
 
@@ -99,3 +108,16 @@ enough value in based on the rumblings I've heard from Mozilla to be worth imple
 2.  David Kitchen suggests that [SRI might be a reasonable
     opt-in](https://twitter.com/buro9/status/923840947959496705) for optionally-blockable mixed
     content.
+
+## Notes
+
+1.  The proposals in this document could make it somewhat harder for developers to migrate to HTTPS,
+    because optionally-blockable mixed content and downloads would break if not upgradable. (In
+    contrast, those resources would continue to work during an HTTPS migration today, albeit with a
+    security indicator downgrade for optionally-blockable mixed content.) We feel that HTTPS
+    adoption has advanced sufficiently that it's now appropriate to start requiring stronger
+    configurations.
+
+2.  The downloads proposal above does not discourage insecure downloads initiated from insecure
+    contexts. Those should eventually be discouraged as well, but we suggest started with "mixed"
+    downloads because insecure contexts are at least visibly marked as insecure in several browsers.
